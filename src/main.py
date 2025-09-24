@@ -1,7 +1,15 @@
 # Example CLI usage
 # -----------------------
 from connection.etabs_connection import connect_to_etabs
+from materials.concrete_material import define_concrete_materials
+from modeling.model_stories import define_stories
+from models.element_infor import RectColumn, Concrete, CircColumn, Story
+from sections.column_circle import define_circular_sections
+from sections.column_rectangular import define_rectangular_sections
+from sections.wall_shell import define_wall_sections
 from utils.build_etabs_data import build_etabs_model_data
+from utils.excel_processing import read_story_table, read_concrete_table, read_rectangular_column_table, \
+    read_circular_column_table, read_wall_table
 
 if __name__ == "__main__":
     # import pprint
@@ -29,12 +37,29 @@ if __name__ == "__main__":
     # for s in data["slabs"][:6]:
     #     pprint.pprint(s)
     sap_model = connect_to_etabs()
-    ret = sap_model.PropMaterial.SetMaterial("Concrete", 2)
+    lb_in_F = 1
+    sap_model.SetPresentUnits(lb_in_F)
 
-    ret = sap_model.PropMaterial.SetOConcrete_1("Concrete", 6, False, 0, 1, 2, 0.0022, 0.0052, -0.1, 0, 0)
+    # Connected to Excel to read data
+    path = r"data/Input Data_V02.xlsx"
 
-    ret = sap_model.PropMaterial.SetMaterial('6000psi', 2)
+    stories = read_story_table(path)
 
+    concretes = read_concrete_table(path)
+
+    rect_columns = read_rectangular_column_table(path)
+
+    cir_columns = read_circular_column_table(path)
+
+    walls = read_wall_table(path)
+
+    define_stories(sap_model, stories, -5.0)
+
+    define_concrete_materials(sap_model, concretes)
+
+    # define_rectangular_sections(sap_model, rect_columns)
+    # define_circular_sections(sap_model, cir_columns)
+    define_wall_sections(sap_model, walls)
+
+    sap_model.View.RefreshView()
     # assign isotropic mechanical properties to material
-
-

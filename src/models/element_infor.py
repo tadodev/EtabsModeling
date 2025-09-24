@@ -15,19 +15,28 @@ class Story:
 @dataclass
 class Concrete:
     name: str
-    fc: float
-    Ec: float
+    fc: float  # Compressive strength (f'c), e.g., in MPa
+    Ec: float  # Modulus of Elasticity, e.g., in MPa
+
+    # Optional mechanical properties with sensible defaults
+    nu: float = 0.2  # Poisson's ratio
+    alpha: float = 9.9e-6  # Co eff. of thermal expansion, per degree Celsius
+
+    # Optional nonlinear properties with sensible defaults
+    is_lightweight: bool = False
+    strain_at_fc: float = 0.0022  # Strain at maximum compressive stress
+    ultimate_strain: float = 0.005  # Ultimate crushing strain for concrete
 
 
 @dataclass
 class RectColumn:
     level: str
-    section_name: str
+    name: str
     material: str
     b: float
     h: float
     long_bar_mat: str
-    confine_mat: str
+    tie_bar_mat: str
     cover: float
     bars_2dir: int
     bars_3dir: int
@@ -41,13 +50,13 @@ class RectColumn:
 @dataclass
 class CircColumn:
     level: str
-    section_name: str
+    name: str
     material: str
     dia: float
     long_bar_mat: str
-    confine_mat: str
+    tie_bar_mat: str
     cover: float
-    num_bars: int
+    num_C_bars: int
     long_bar_size: str
     tie_bar_size: str
     tie_spacing: float
@@ -56,12 +65,11 @@ class CircColumn:
 @dataclass
 class Wall:
     level: str
+    name: str
     material: str
-    fc: int
-    name_x: str
-    wall_x_thk: int
-    name_y: str
-    wall_y_thk: int
+    wall_thk: float
+    wall_prop: int = 1  # 1 = specified
+    shell_type: int = 1  # 1= shellThin
 
 
 @dataclass

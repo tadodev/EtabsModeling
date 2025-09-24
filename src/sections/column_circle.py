@@ -1,45 +1,51 @@
+from typing import List
+
 from models.element_infor import CircColumn
 
 
-def define_circular_section(sap_model, column: CircColumn):
+# Make sure CircColumn dataclass is imported
+# from models.element_infor import CircColumn
+
+def define_circular_sections(sap_model, columns: List[CircColumn]):
     """
-    Define a circular frame section in ETABS from a CircColumn dataclass,
-    and assign reinforcement using SetRebarColumn.
+    Defines multiple circular frame sections in the model from a list of CircColumn objects.
     """
-    # 1. Define circular geometry
-    ret = sap_model.PropFrame.SetCircle(
-        column.section_name,   # Section name
-        column.long_bar_mat,   # Material (concrete) must exist in ETABS
-        column.dia        # Diameter of circular column
-    )
+    for column in columns:
+        try:
+            # 1. Define circular geometry
+            # Note: Corrected to use the concrete material `column.material`
+            ret = sap_model.PropFrame.SetCircle(
+                column.name,
+                column.material, # This should be the concrete material
+                column.dia
+            )
+            if ret != 0:
+                raise Exception(f"Failed to define section geometry (Error code: {ret})")
 
-    if ret != 0:
-        raise Exception(f"ETABS failed to define circular section {column.section_name}. Error code: {ret}")
-    else:
-        print(f"✅ Defined circular section {column.section_name} (Ø {column.dia}).")
+            print(f"✅ Defined section: {column.name} (Ø {column.dia})")
 
-    # 2. Assign reinforcement
-    ret = sap_model.PropFrame.SetRebarColumn(
-        column.section_name,          # Frame section name
-        column.long_bar_mat,          # Longitudinal rebar material
-        column.confine_mat,           # Confinement rebar material
-        2,                            # Pattern = 2 (Circular)
-        1,  # ConfineType: 1=Ties, 2=Spiral
-        column.cover,                 # Clear cover
-        column.num_bars,         # Total longitudinal bars (for circular)
-        0,                            # NumberR3Bars (not used in circular)
-        0,                            # NumberR2Bars (not used in circular)
-        column.long_bar_size,         # Longitudinal bar size
-        column.tie_bar_size,          # Tie/spiral bar size
-        column.tie_spacing,           # Spacing of ties/spirals
-        0,                            # Tie legs 2-dir (not used in circular)
-        0,                            # Tie legs 3-dir (not used in circular)
-        False                         # ToBeDesigned = False (Check only)
-    )
+            # 2. Assign reinforcement
+            ret = sap_model.PropFrame.SetRebarColumn(
+                column.name,
+                column.long_bar_mat,
+                column.tie_bar_mat,
+                2,                     # Pattern = 2 (Circular)
+                1,                     # ConfineType: 1=Ties, 2=Spiral
+                column.cover,
+                column.num_C_bars,     # Total number of longitudinal bars
+                0,                     # Bars along 3-axis (not for circular)
+                0,                     # Bars along 2-axis (not for circular)
+                column.long_bar_size,
+                column.tie_bar_size,
+                column.tie_spacing,
+                0,                     # Tie legs 2-dir (not for circular)
+                0,                     # Tie legs 3-dir (not for circular)
+                False                  # ToBeDesigned = False
+            )
+            if ret != 0:
+                raise Exception(f"Failed to assign rebar (Error code: {ret})")
 
-    if ret != 0:
-        raise Exception(f"ETABS failed to assign rebar to {column.section_name}. Error code: {ret}")
-    else:
-        print(f"✅ Assigned rebar to {column.section_name}: "
-              f"{column.num_bars} {column.long_bar_size} with {column.tie_bar_size} "
-              f"{'ties'} @ {column.tie_spacing}.")
+            print(f"   ... Assigned rebar to {column.name}.")
+
+        except Exception as e:
+            print(f"❌ ERROR defining circular section '{column.name}': {e}")

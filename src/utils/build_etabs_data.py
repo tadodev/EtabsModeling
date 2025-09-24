@@ -6,12 +6,12 @@ from utils.dxf_processing import read_dxf_plan
 from utils.get_elements import get_columns, get_walls, get_slabs
 from utils.excel_processing import (
     read_story_table,
-    read_column_table,
+    read_rectangular_column_table,
     read_wall_table,
     read_coupling_beam_table,
     read_slab_table,
 )
-from models.element_infor import Story, Column, Wall, CouplingBeam, Slab
+from models.element_infor import Story, RectColumn, Wall, CouplingBeam, Slab
 
 # -----------------------
 # Utilities
@@ -97,7 +97,7 @@ def _to_pyfloat_triplet(pt):
 def merge_columns(
         columns_geo: List[List[Tuple[float, float, float]]],
         story_base_map: Dict[float, str],
-        excel_columns: List[Column],
+        excel_columns: List[RectColumn],
 ) -> List[Dict[str, Any]]:
     """
     columns_geo: list of stacks; each stack is a list of top points (z = cumulative top) in bottom-up story order.
@@ -225,7 +225,7 @@ def build_etabs_model_data(
     """
     # --- excel ---
     stories = read_story_table(excel_path)
-    excel_columns = read_column_table(excel_path)
+    excel_columns = read_rectangular_column_table(excel_path)
     excel_walls = read_wall_table(excel_path)
     excel_beams = read_coupling_beam_table(excel_path)
     excel_slabs = read_slab_table(excel_path)
