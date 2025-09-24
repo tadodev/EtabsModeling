@@ -5,16 +5,52 @@ from dataclasses import dataclass
 class Story:
     level: str
     height: float  # in ft for now
+    is_master: bool = False
+    similar_to: str = "None"
+    splice_above: bool = False
+    splice_height: float = 0.0
+    color: int = 0
 
 
 @dataclass
-class Column:
-    level: str
-    material: str
-    fc: float
+class Concrete:
     name: str
-    d_or_b: float
+    fc: float
+    Ec: float
+
+
+@dataclass
+class RectColumn:
+    level: str
+    section_name: str
+    material: str
+    b: float
     h: float
+    long_bar_mat: str
+    confine_mat: str
+    cover: float
+    bars_2dir: int
+    bars_3dir: int
+    long_bar_size: str
+    tie_bar_size: str
+    tie_spacing: float
+    tie_legs_2dir: int
+    tie_legs_3dir: int
+
+
+@dataclass
+class CircColumn:
+    level: str
+    section_name: str
+    material: str
+    dia: float
+    long_bar_mat: str
+    confine_mat: str
+    cover: float
+    num_bars: int
+    long_bar_size: str
+    tie_bar_size: str
+    tie_spacing: float
 
 
 @dataclass
