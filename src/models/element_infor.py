@@ -88,9 +88,10 @@ class CouplingBeam:
 @dataclass
 class Slab:
     level: str
-    material: str
-    fc: int
     name: str
-    thickness: float
-    sdl: float
-    live: float
+    material: str
+    slab_thk: float
+    slab_prop: int = 0  # 1 = slab
+    shell_type: int = 1  # 1= shellThin
+    sdl: float = 0.0  # in psf
+    live: float = 0.0  # in psf
