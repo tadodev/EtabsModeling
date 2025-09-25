@@ -33,19 +33,19 @@ $INSBASE
   9
 $EXTMIN
  10
--63.0
+-63.04504050878449
  20
--9.0
+-9.032956469842247
  30
-0.0
+-0.0015258207003583
   9
 $EXTMAX
  10
-1413.0
+1413.045047381945
  20
-1071.0
+1071.032961498984
  30
-0.0
+0.0000000349246037
   9
 $LIMMIN
  10
@@ -101,7 +101,7 @@ STANDARD
   9
 $CLAYER
   8
-TEXT
+WALL X
   9
 $CELTYPE
   6
@@ -501,19 +501,19 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2460942.616307871
+2460944.650381945
   9
 $TDUUPDATE
  40
-2460942.324641203
+2460944.358715277
   9
 $TDINDWG
  40
-0.0445004630
+2.0785745370
   9
 $TDUSRTIMER
  40
-0.0445004630
+2.0785745370
   9
 $USRTIMER
  70
@@ -553,7 +553,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-66E
+680
   9
 $SURFTAB1
  70
@@ -937,7 +937,7 @@ $FINGERPRINTGUID
   9
 $VERSIONGUID
   2
-{599DED3F-1836-D449-AA05-021ECFF8C649}
+{5D345EFF-90A3-C540-BF81-D7D4CA0A01A9}
   9
 $EXTNAMES
 290
@@ -1279,7 +1279,7 @@ ObjectDBX Classes
  90
      1152
  91
-        2
+        3
 280
      0
 281
@@ -1389,9 +1389,9 @@ AcDbViewportTableRecord
  21
 1.0
  12
-366.427529858478
+-0.0203727688636946
  22
--234.4420738030664
+0.0000325553121456
  13
 0.0
  23
@@ -1417,9 +1417,9 @@ AcDbViewportTableRecord
  37
 0.0
  40
-1234.756894105053
+1088.706445312577
  41
-2.632373113854595
+2.562082777036048
  42
 50.0
  43
@@ -1691,7 +1691,7 @@ LAYER
 100
 AcDbSymbolTable
  70
-    14
+    16
   0
 LAYER
   5
@@ -1869,7 +1869,7 @@ AcDbSymbolTableRecord
 100
 AcDbLayerTableRecord
   2
-WALL
+WALL X
  70
      0
  62
@@ -2153,6 +2153,70 @@ AcCmTransparency
 1071
         0
   0
+LAYER
+  5
+66E
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+WALL Y
+ 70
+     0
+ 62
+    21
+  6
+CONTINUOUS
+370
+    -3
+390
+4B8
+347
+4CA
+348
+0
+1001
+AcAecLayerStandard
+1000
+
+1000
+
+1001
+AcCmTransparency
+1071
+        0
+  0
+LAYER
+  5
+670
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Defpoints
+ 70
+     0
+ 62
+     7
+  6
+CONTINUOUS
+290
+     0
+370
+    -3
+390
+4B8
+347
+4CA
+348
+0
+  0
 ENDTAB
   0
 TABLE
@@ -2369,7 +2433,7 @@ BLOCK_RECORD
 100
 AcDbSymbolTable
  70
-    27
+    28
   0
 BLOCK_RECORD
   5
@@ -2928,6 +2992,26 @@ AcDbSymbolTableRecord
 AcDbBlockTableRecord
   2
 *D25
+340
+0
+ 70
+     0
+280
+     1
+281
+     0
+  0
+BLOCK_RECORD
+  5
+671
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+*D27
 340
 0
  70
@@ -15195,6 +15279,348 @@ AcDbEntity
 100
 AcDbBlockEnd
   0
+BLOCK
+  5
+672
+330
+671
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+*D27
+ 70
+     1
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+*D27
+  1
+
+  0
+LINE
+  5
+674
+330
+671
+100
+AcDbEntity
+  8
+WALL X
+ 62
+     0
+440
+ 16777216
+370
+    -2
+100
+AcDbLine
+ 10
+378.0
+ 20
+902.6854959592446
+ 30
+0.0
+ 11
+378.0
+ 21
+922.0332955132931
+ 31
+0.0
+  0
+LINE
+  5
+675
+330
+671
+100
+AcDbEntity
+  8
+WALL X
+ 62
+     0
+440
+ 16777216
+370
+    -2
+100
+AcDbLine
+ 10
+702.0
+ 20
+902.6854959592446
+ 30
+0.0
+ 11
+702.0
+ 21
+922.0332955132931
+ 31
+0.0
+  0
+LINE
+  5
+676
+330
+671
+100
+AcDbEntity
+  8
+WALL X
+ 62
+     0
+440
+ 16777216
+370
+    -2
+100
+AcDbLine
+ 10
+378.18
+ 20
+921.8532955132932
+ 30
+0.0
+ 11
+539.34
+ 21
+921.8532955132932
+ 31
+0.0
+  0
+LINE
+  5
+677
+330
+671
+100
+AcDbEntity
+  8
+WALL X
+ 62
+     0
+440
+ 16777216
+370
+    -2
+100
+AcDbLine
+ 10
+701.82
+ 20
+921.8532955132932
+ 30
+0.0
+ 11
+540.66
+ 21
+921.8532955132932
+ 31
+0.0
+  0
+SOLID
+  5
+678
+330
+671
+100
+AcDbEntity
+  8
+WALL X
+ 62
+     0
+440
+ 16777216
+100
+AcDbTrace
+ 10
+378.18
+ 20
+921.8832955132931
+ 30
+0.0
+ 11
+378.18
+ 21
+921.8232955132933
+ 31
+0.0
+ 12
+378.0
+ 22
+921.8532955132932
+ 32
+0.0
+ 13
+378.0
+ 23
+921.8532955132932
+ 33
+0.0
+  0
+SOLID
+  5
+679
+330
+671
+100
+AcDbEntity
+  8
+WALL X
+ 62
+     0
+440
+ 16777216
+100
+AcDbTrace
+ 10
+701.82
+ 20
+921.8832955132931
+ 30
+0.0
+ 11
+701.82
+ 21
+921.8232955132933
+ 31
+0.0
+ 12
+702.0
+ 22
+921.8532955132932
+ 32
+0.0
+ 13
+702.0
+ 23
+921.8532955132932
+ 33
+0.0
+  0
+MTEXT
+  5
+67A
+330
+671
+100
+AcDbEntity
+  8
+WALL X
+ 62
+     0
+440
+ 16777216
+100
+AcDbMText
+ 10
+540.0
+ 20
+921.8532955132932
+ 30
+0.0
+ 40
+0.18
+ 41
+0.0
+ 46
+0.0
+ 71
+     5
+ 72
+     1
+  1
+\A1;324.0000
+ 73
+     1
+ 44
+1.0
+  0
+POINT
+  5
+67B
+330
+671
+100
+AcDbEntity
+  8
+Defpoints
+ 62
+     0
+440
+ 16777216
+100
+AcDbPoint
+ 10
+378.0
+ 20
+902.6229959592447
+ 30
+0.0
+  0
+POINT
+  5
+67C
+330
+671
+100
+AcDbEntity
+  8
+Defpoints
+ 62
+     0
+440
+ 16777216
+100
+AcDbPoint
+ 10
+702.0
+ 20
+902.6229959592445
+ 30
+0.0
+  0
+POINT
+  5
+67D
+330
+671
+100
+AcDbEntity
+  8
+Defpoints
+ 62
+     0
+440
+ 16777216
+100
+AcDbPoint
+ 10
+702.0
+ 20
+921.8532955132932
+ 30
+0.0
+  0
+ENDBLK
+  5
+673
+330
+671
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
 ENDSEC
   0
 SECTION
@@ -17293,7 +17719,7 @@ LINE
 100
 AcDbEntity
   8
-WALL
+WALL Y
 100
 AcDbLine
  10
@@ -17317,7 +17743,7 @@ LINE
 100
 AcDbEntity
   8
-WALL
+WALL X
 100
 AcDbLine
  10
@@ -17341,7 +17767,7 @@ LINE
 100
 AcDbEntity
   8
-WALL
+WALL Y
 100
 AcDbLine
  10
@@ -17669,7 +18095,7 @@ LINE
 100
 AcDbEntity
   8
-WALL
+WALL Y
 100
 AcDbLine
  10
@@ -17693,7 +18119,7 @@ LINE
 100
 AcDbEntity
   8
-WALL
+WALL X
 100
 AcDbLine
  10
@@ -17717,7 +18143,7 @@ LINE
 100
 AcDbEntity
   8
-WALL
+WALL Y
 100
 AcDbLine
  10
@@ -17859,7 +18285,7 @@ ACAD_VISUALSTYLE
   3
 ACDB_RECOMPOSE_DATA
 350
-66D
+67F
   3
 AcDbVariableDictionary
 350
@@ -18533,7 +18959,7 @@ X-Ray
   0
 XRECORD
   5
-66D
+67F
 102
 {ACAD_REACTORS
 330
@@ -27587,7 +28013,7 @@ AcDbDictionary
   3
 ACAD_ROUNDTRIP_2008_TABLESTYLE_CELLSTYLEMAP
 360
-66C
+67E
   0
 DICTIONARY
   5
@@ -27967,7 +28393,7 @@ AcDbXrecord
   0
 CELLSTYLEMAP
   5
-66C
+67E
 102
 {ACAD_REACTORS
 330
@@ -28643,72 +29069,6 @@ ACDSSCHEMA
  90
         0
   1
-AcDb_Thumbnail_Schema
-  2
-AcDbDs::ID
-280
-    10
- 91
-        8
-  2
-Thumbnail_Data
-280
-    15
- 91
-        0
-101
-ACDSRECORD
- 95
-        0
- 90
-        2
-  2
-AcDbDs::TreatedAsObjectData
-280
-     1
-291
-     1
-101
-ACDSRECORD
- 95
-        0
- 90
-        3
-  2
-AcDbDs::Legacy
-280
-     1
-291
-     1
-101
-ACDSRECORD
-  1
-AcDbDs::ID
- 90
-        4
-  2
-AcDs:Indexable
-280
-     1
-291
-     1
-101
-ACDSRECORD
-  1
-AcDbDs::ID
- 90
-        5
-  2
-AcDbDs::HandleAttribute
-280
-     7
-282
-     1
-  0
-ACDSSCHEMA
- 90
-        1
-  1
 AcDb3DSolid_ASM_Data
   2
 AcDbDs::ID
@@ -28725,9 +29085,9 @@ ASM_Data
 101
 ACDSRECORD
  95
-        1
+        0
  90
-        2
+        1
   2
 AcDbDs::TreatedAsObjectData
 280
@@ -28737,9 +29097,9 @@ AcDbDs::TreatedAsObjectData
 101
 ACDSRECORD
  95
-        1
+        0
  90
-        3
+        2
   2
 AcDbDs::Legacy
 280
@@ -28751,7 +29111,7 @@ ACDSRECORD
   1
 AcDbDs::ID
  90
-        4
+        3
   2
 AcDs:Indexable
 280
@@ -28763,7 +29123,7 @@ ACDSRECORD
   1
 AcDbDs::ID
  90
-        5
+        4
   2
 AcDbDs::HandleAttribute
 280
@@ -28773,7 +29133,7 @@ AcDbDs::HandleAttribute
   0
 ACDSSCHEMA
  90
-        2
+        1
   1
 AcDbDs::TreatedAsObjectDataSchema
   2
@@ -28785,7 +29145,7 @@ AcDbDs::TreatedAsObjectData
   0
 ACDSSCHEMA
  90
-        3
+        2
   1
 AcDbDs::LegacySchema
   2
@@ -28797,7 +29157,7 @@ AcDbDs::Legacy
   0
 ACDSSCHEMA
  90
-        4
+        3
   1
 AcDbDs::IndexedPropertySchema
   2
@@ -28809,7 +29169,7 @@ AcDs:Indexable
   0
 ACDSSCHEMA
  90
-        5
+        4
   1
 AcDbDs::HandleAttributeSchema
   2
@@ -28823,7 +29183,7 @@ AcDbDs::HandleAttribute
   0
 ACDSRECORD
  90
-        1
+        0
   2
 AcDbDs::ID
 280
@@ -28867,7 +29227,7 @@ FF0CFFFFFFFF1300000000000000000000000000000000000000000000000014000000000000F0BF
   0
 ACDSRECORD
  90
-        1
+        0
   2
 AcDbDs::ID
 280
@@ -28911,7 +29271,7 @@ FF0CFFFFFFFF13000000000000000000000000000000000000000000000000140000000000A691BC
   0
 ACDSRECORD
  90
-        1
+        0
   2
 AcDbDs::ID
 280
@@ -28955,7 +29315,7 @@ FF0CFFFFFFFF13000000000000000000000000000000000000000000000000140000000000000000
   0
 ACDSRECORD
  90
-        1
+        0
   2
 AcDbDs::ID
 280
@@ -29059,7 +29419,7 @@ BF110E0873747261696768740D0563757276650CFFFFFFFF04FFFFFFFF0CFFFFFFFF130000000000
   0
 ACDSRECORD
  90
-        1
+        0
   2
 AcDbDs::ID
 280
