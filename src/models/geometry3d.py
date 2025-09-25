@@ -38,3 +38,5 @@ class SlabGeom:
     z_coord: List[float]
     prop_name: str
     name: str = ""
+    sdl: float = 0.0  # in psf
+    live: float = 0.0  # in psf

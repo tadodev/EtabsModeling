@@ -80,13 +80,13 @@ def etabs_model_builder():
 
     # For slabs, you'd need polylines from DXF instead of lines
     slab_geoms = extrude_polylines_to_slabs(
-         slab_polylines, stories, slabs, base_elevation)
+        slab_polylines, stories, slabs, base_elevation)
 
     # Create elements in ETABS
     create_columns_in_etabs(sap_model, rect_column_geoms + circ_column_geoms)
     create_walls_in_etabs(sap_model, wall_x_geoms + wall_y_geoms)
     create_beams_in_etabs(sap_model, coupling_beam_geoms)
-    create_slabs_in_etabs(sap_model, slab_geoms)
+    create_slabs_in_etabs(sap_model, slab_geoms, "Dead", "Live")
 
     # Refresh the view
     sap_model.View.RefreshView()

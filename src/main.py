@@ -2,7 +2,9 @@
 # -----------------------
 from connection.etabs_connection import connect_to_etabs
 from materials.concrete_material import define_concrete_materials
+from modeling.model_slabs import create_slabs_in_etabs
 from modeling.model_stories import define_stories
+from models.geometry3d import SlabGeom
 from sections.beam_rectangle import define_beam_sections
 from sections.column_circle import define_circular_sections
 from sections.column_rectangular import define_rectangular_sections

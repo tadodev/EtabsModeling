@@ -156,11 +156,11 @@ def extrude_polylines_to_slabs(
     for poly_idx, polyline in enumerate(dxf_polylines):
         for story_idx, story in enumerate(stories):
             z_level = elevations[story_idx + 1] * 12  # Slab at top of story, convert to inches
-
-            # Get slab section name
-            prop_name = "Default"
-            if story.level in slab_props:
-                prop_name = slab_props[story.level].name
+            # Get slab section name and loads
+            level_slab = slab_props.get(story.level)
+            prop_name = level_slab.name if level_slab else "Default"
+            sdl = level_slab.sdl if level_slab else 0.0
+            live = level_slab.live if level_slab else 0.0
 
             # Extract coordinates and convert to inches
             x_coords = [pt[0] for pt in polyline]
@@ -173,7 +173,9 @@ def extrude_polylines_to_slabs(
                 y_coord=y_coords,
                 z_coord=z_coords,
                 prop_name=prop_name,
-                # name=f"S{poly_idx + 1}_{story.level}"
+                name=f"S{poly_idx + 1}_{story.level}",
+                sdl=sdl,
+                live=live
             )
             slab_geometries.append(slab_geom)
 
