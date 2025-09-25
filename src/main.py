@@ -2,14 +2,16 @@
 # -----------------------
 from connection.etabs_connection import connect_to_etabs
 from materials.concrete_material import define_concrete_materials
+from modeling.model_beams import define_beam_sections
 from modeling.model_stories import define_stories
 from models.element_infor import RectColumn, Concrete, CircColumn, Story
 from sections.column_circle import define_circular_sections
 from sections.column_rectangular import define_rectangular_sections
+from sections.slab_shell import define_slab_sections
 from sections.wall_shell import define_wall_sections
 from utils.build_etabs_data import build_etabs_model_data
 from utils.excel_processing import read_story_table, read_concrete_table, read_rectangular_column_table, \
-    read_circular_column_table, read_wall_table
+    read_circular_column_table, read_wall_table, read_slab_table, read_coupling_beam_table
 
 if __name__ == "__main__":
     # import pprint
@@ -53,13 +55,20 @@ if __name__ == "__main__":
 
     walls = read_wall_table(path)
 
+    coupling_beams = read_coupling_beam_table(path)
+
+    slabs = read_slab_table(path)
+
+    # Define properties in ETABS
     define_stories(sap_model, stories, -5.0)
 
     define_concrete_materials(sap_model, concretes)
 
-    # define_rectangular_sections(sap_model, rect_columns)
-    # define_circular_sections(sap_model, cir_columns)
+    define_rectangular_sections(sap_model, rect_columns)
+    define_circular_sections(sap_model, cir_columns)
     define_wall_sections(sap_model, walls)
+    define_beam_sections(sap_model, coupling_beams)
+    define_slab_sections(sap_model, slabs)
 
     sap_model.View.RefreshView()
     # assign isotropic mechanical properties to material

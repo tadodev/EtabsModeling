@@ -75,14 +75,18 @@ class Wall:
 @dataclass
 class CouplingBeam:
     level: str
+    name: str
     material: str
-    fc: int
-    name_x: str
-    b_x: int
-    h_x: int
-    name_y: str
-    b_y: int
-    h_y: int
+    b: float
+    h: float
+    long_bar_mat: str = "A615Gr60"  # Default for now
+    tie_bar_mat: str = "A615Gr60"
+    cover_top: float = 2.5
+    cover_bot: float = 2.5
+    top_left_area: float = 0.0
+    top_right_area: float = 0.0
+    bot_left_area: float = 0.0
+    bot_right_area: float = 0.0
 
 
 @dataclass

@@ -152,17 +152,19 @@ def read_coupling_beam_table(path: str, sheet: str = "Coupling Beam") -> List[Co
     for row in ws.iter_rows(min_row=3, values_only=True):
         if not row[0]:
             continue
-        beams.append(CouplingBeam(
-            level=row[0],
-            material=row[1],
-            fc=int(row[2]),
-            name_x=row[3],
-            b_x=int(row[4]),
-            h_x=int(row[5]),
-            name_y=row[6],
-            b_y=int(row[7]),
-            h_y=int(row[8])
-        ))
+        level = row[0]
+        material = row[1]  # "6000 psi"
+        # Skip f'c column (row[2])
+        name_x = row[3]
+        b_x = float(row[4])
+        h_x = float(row[5])
+        name_y = row[6]
+        b_y = float(row[7])
+        h_y = float(row[8])
+
+        beams.append(CouplingBeam(level=level, name=name_x, material=material, b=b_x, h=h_x))
+        beams.append(CouplingBeam(level=level, name=name_y, material=material, b=b_y, h=h_y))
+
     return beams
 
 
@@ -175,13 +177,13 @@ def read_slab_table(path: str, sheet: str = "Slab") -> List[Slab]:
     for row in ws.iter_rows(min_row=3, values_only=True):
         if not row[0]:
             continue
-        slabs.append(Slab(
-            level=row[0],
-            material=row[1],
-            fc=int(row[2]),
-            name=row[3],
-            thickness=float(row[4]),
-            sdl=float(row[5]),
-            live=float(row[6])
-        ))
+        level = row[0]
+        name = row[1]
+        material = row[2]
+        thk = float(row[3])
+        sdl = float(row[4])
+        live = float(row[5])
+
+        slabs.append(Slab(level=level, name=name, material=material, slab_thk=thk, sdl=sdl, live=live))
+
     return slabs
