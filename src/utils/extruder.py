@@ -1,14 +1,16 @@
 from typing import List, Tuple
-from src.models.geometry2d import Point2DGeom, Line2DGeom, Polygon2DGeom
+
+from models.element_infor import Story
+from src.models.geometry3d import Point2DGeom, Line2DGeom, Polygon2DGeom
 
 Point3D = Tuple[float, float, float]
 
 
-def extrude_point(point: Point2DGeom, story_heights: List[float]) -> List[Point3D]:
+def extrude_point(point: Point2DGeom, stories: list[Story]) -> List[Point3D]:
     """Extrude a single point vertically through story heights."""
     z = 0.0
     pts = []
-    for h in story_heights:
+    for h in stories:
         z += h
         pts.append((point.p[0], point.p[1], z))
     return pts

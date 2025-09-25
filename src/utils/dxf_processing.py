@@ -24,7 +24,7 @@ def get_model_space(doc: Drawing):
 
 
 # ---------- Base extractors ----------
-def _get_points_by_layer(doc: Drawing, layer: str):
+def get_points_by_layer(doc: Drawing, layer: str):
     msp = get_model_space(doc)
     return [
         (pt.dxf.location.x, pt.dxf.location.y, pt.dxf.location.z)
@@ -32,7 +32,7 @@ def _get_points_by_layer(doc: Drawing, layer: str):
     ]
 
 
-def _get_lines_by_layer(doc: Drawing, layer: str):
+def get_lines_by_layer(doc: Drawing, layer: str):
     msp = get_model_space(doc)
     return [
         ((e.dxf.start.x, e.dxf.start.y, e.dxf.start.z),
@@ -41,7 +41,7 @@ def _get_lines_by_layer(doc: Drawing, layer: str):
     ]
 
 
-def _get_polylines_by_layer(doc: Drawing, layer: str, closed_only=False):
+def get_polylines_by_layer(doc: Drawing, layer: str, closed_only=False):
     msp = get_model_space(doc)
     polys = []
     for e in msp.query("LWPOLYLINE POLYLINE"):

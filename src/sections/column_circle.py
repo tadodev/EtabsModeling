@@ -2,10 +2,6 @@ from typing import List
 
 from models.element_infor import CircColumn
 
-
-# Make sure CircColumn dataclass is imported
-# from models.element_infor import CircColumn
-
 def define_circular_sections(sap_model, columns: List[CircColumn]):
     """
     Defines multiple circular frame sections in the model from a list of CircColumn objects.

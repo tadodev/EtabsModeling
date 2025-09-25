@@ -1,4 +1,4 @@
-from models.geometry2d import Point2DGeom, Line2DGeom, Polygon2DGeom
+from models.geometry3d import Point2DGeom, Line2DGeom, Polygon2DGeom
 from utils.extruder import extrude_point, extrude_line, extrude_polygon
 from utils.dxf_processing import _get_lines_by_layer, _get_polylines_by_layer, _get_points_by_layer
 
