@@ -41,14 +41,23 @@ def get_lines_by_layer(doc: Drawing, layer: str):
     ]
 
 
-def get_polylines_by_layer(doc: Drawing, layer: str, closed_only=False):
-    msp = get_model_space(doc)
+def get_polylines_by_layer(doc: Drawing, layer: str, closed_only: bool = False):
+    msp = doc.modelspace()
     polys = []
+
     for e in msp.query("LWPOLYLINE POLYLINE"):
         if e.dxf.layer != layer:
             continue
         if closed_only and not e.closed:
             continue
-        pts = [(p[0], p[1], 0.0) for p in e.get_points()]
+
+        if e.dxftype() == "LWPOLYLINE":
+            pts = [(x, y, 0.0) for x, y, *_ in e.get_points()]  # (x, y, start_width, end_width, bulge)
+        elif e.dxftype() == "POLYLINE":
+            pts = [(v.dxf.location.x, v.dxf.location.y, v.dxf.location.z) for v in e.vertices]
+        else:
+            continue
+
         polys.append(pts)
+
     return polys

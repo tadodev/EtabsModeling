@@ -23,11 +23,11 @@ def etabs_model_builder():
     """
     # Connect to ETABS
     sap_model = connect_to_etabs()
-    sap_model.SetPresentUnits(1)  # lb_in_F units
-    base_elevation = -5.0  # Base elevation in feet
+    sap_model.SetPresentUnits(9)  # n_mm_C units
+    base_elevation = -18  # Base elevation in feet
 
     # Read data from Excel
-    excel_path = r"data/Input Data_V02.xlsx"
+    excel_path = r"data/Input Data_V02_metric.xlsx"
     stories = read_story_table(excel_path)
     concretes = read_concrete_table(excel_path)
     rect_columns = read_rectangular_column_table(excel_path)
@@ -46,13 +46,13 @@ def etabs_model_builder():
     define_slab_sections(sap_model, slabs)
 
     # Read geometry from DXF
-    dxf_path = r"data/PLan View_V02.dxf"
+    dxf_path = r"C:\Work\Project\KPF Tower\plan_tower.dxf"
     doc = read_dxf_plan(dxf_path)
 
     # Get 2D geometry data
     cir_column_locations = get_points_by_layer(doc, "CIR COLS")
     rect_column_locations = get_points_by_layer(doc, "REC COLS")
-    coupling_beam_y_location = get_lines_by_layer(doc, "CB Y")
+    coupling_beam_y_location = get_lines_by_layer(doc, "CB X")
     wall_x_locations = get_lines_by_layer(doc, "WALL X")
     wall_y_locations = get_lines_by_layer(doc, "WALL Y")
     slab_polylines = get_polylines_by_layer(doc, "SLAB")  # Assuming these are polylines
@@ -86,7 +86,7 @@ def etabs_model_builder():
     create_columns_in_etabs(sap_model, rect_column_geoms + circ_column_geoms)
     create_walls_in_etabs(sap_model, wall_x_geoms + wall_y_geoms)
     create_beams_in_etabs(sap_model, coupling_beam_geoms)
-    create_slabs_in_etabs(sap_model, slab_geoms, "Dead", "Live")
+    create_slabs_in_etabs(sap_model, slab_geoms, "SDL", "LL_unread")
 
     # Refresh the view
     sap_model.View.RefreshView()

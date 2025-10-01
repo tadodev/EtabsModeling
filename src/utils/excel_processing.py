@@ -10,6 +10,11 @@ def read_story_table(path: str, sheet: str = "Story") -> List[Story]:
     """
     Reads story data from an Excel sheet. Assumes stories are listed
     from top to bottom (e.g., L44, L43, ... L1).
+
+    Expected columns:
+    - Level (str): Level name (e.g., "L1", "L2")
+    - Height (float): Story height in meters
+    - DXF_Path (str): Path to DXF file for this level (optional)
     """
     wb = load_workbook(path, data_only=True)
     ws = wb[sheet]
@@ -19,9 +24,14 @@ def read_story_table(path: str, sheet: str = "Story") -> List[Story]:
     for row in ws.iter_rows(min_row=3, values_only=True):
         if not row[0]:  # Stop if the level name is blank
             continue
+
+        # Get DXF path if provided (column index 2)
+        dxf_path = str(row[2]) if row[2] else ""
+
         stories.append(Story(
             level=str(row[0]),
-            height=float(row[1])
+            height=float(row[1]),
+            dxf_path=dxf_path
         ))
 
     # IMPORTANT: Reverse the list because ETABS requires stories

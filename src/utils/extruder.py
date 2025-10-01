@@ -54,8 +54,8 @@ def extrude_points_to_columns(
 
     for point_idx, (x, y, _) in enumerate(dxf_points):
         for story_idx, story in enumerate(stories):
-            z_bottom = elevations[story_idx] * 12  # Convert to inches
-            z_top = elevations[story_idx + 1] * 12  # Convert to inches
+            z_bottom = elevations[story_idx] * 1000  # Convert to mm
+            z_top = elevations[story_idx + 1] * 1000  # Convert to mm
 
             # Determine section name based on available column data
             prop_name = "Default"
@@ -102,8 +102,8 @@ def extrude_lines_to_walls(
 
     for line_idx, ((x1, y1, _), (x2, y2, _)) in enumerate(dxf_lines):
         for story_idx, story in enumerate(stories):
-            z_bottom = elevations[story_idx] * 12  # Convert to inches
-            z_top = elevations[story_idx + 1] * 12  # Convert to inches
+            z_bottom = elevations[story_idx] * 1000  # Convert to mm
+            z_top = elevations[story_idx + 1] * 1000  # Convert to mm
 
             # Get wall section name
             prop_name = "Default"
@@ -155,7 +155,7 @@ def extrude_polylines_to_slabs(
 
     for poly_idx, polyline in enumerate(dxf_polylines):
         for story_idx, story in enumerate(stories):
-            z_level = elevations[story_idx + 1] * 12  # Slab at top of story, convert to inches
+            z_level = elevations[story_idx + 1] * 1000  # Slab at top of story, convert to mm
             # Get slab section name and loads
             level_slab = slab_props.get(story.level)
             prop_name = level_slab.name if level_slab else "Default"
@@ -214,7 +214,7 @@ def extrude_lines_to_beams(
     for line_idx, ((x1, y1, _), (x2, y2, _)) in enumerate(dxf_lines):
         for story_idx, story in enumerate(stories):
             # Beams are placed at the floor level (top of each story)
-            z_level = elevations[story_idx + 1] * 12  # Convert to inches
+            z_level = elevations[story_idx + 1] * 1000  # Convert to inches
 
             # Create beam geometry using line endpoints
             start_point = (x1, y1, z_level)

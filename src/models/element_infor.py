@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class Story:
     level: str
     height: float  # in ft for now
+    dxf_path: str = ""  # Optional path to DXF file for this story
     is_master: bool = False
     similar_to: str = "None"
     splice_above: bool = False
@@ -81,8 +82,8 @@ class CouplingBeam:
     h: float
     long_bar_mat: str = "A615Gr60"  # Default for now
     tie_bar_mat: str = "A615Gr60"
-    cover_top: float = 2.5
-    cover_bot: float = 2.5
+    cover_top: float = 40
+    cover_bot: float = 40
     top_left_area: float = 0.0
     top_right_area: float = 0.0
     bot_left_area: float = 0.0
@@ -97,5 +98,5 @@ class Slab:
     slab_thk: float
     slab_prop: int = 0  # 1 = slab
     shell_type: int = 1  # 1= shellThin
-    sdl: float = 0.0  # in psf
-    live: float = 0.0  # in psf
+    sdl: float = 0.0  # in psf / N/mm2 in metric
+    live: float = 0.0  # in psf/ N/mm2 in metric

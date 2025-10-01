@@ -18,16 +18,16 @@ def define_stories(sap_model, stories: list[Story], base_elevation: float):
 
     # Convert the list of dataclasses into the separate lists required by the ETABS API
     story_names = [s.level for s in stories]
-    story_heights = [s.height*12 for s in stories]
+    story_heights = [s.height*1000 for s in stories]
     is_master_story = [s.is_master for s in stories]
     similar_to_story = [s.similar_to for s in stories]
     splice_above = [s.splice_above for s in stories]
-    splice_height = [s.splice_height for s in stories]
+    splice_height = [s.splice_height*1000 for s in stories]
     colors = [s.color for s in stories]
 
     # Call the ETABS API function with the new base_elevation parameter
     returned_values = sap_model.Story.SetStories_2(
-        base_elevation*12,
+        base_elevation*1000,
         len(stories),
         story_names,
         story_heights,
