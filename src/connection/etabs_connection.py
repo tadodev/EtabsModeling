@@ -1,6 +1,6 @@
 import sys
 import comtypes.client
-import comtypes.gen.ETABSv1
+
 
 default_path = r"C:\Program Files\Computers and Structures\ETABS 22\ETABS.exe"
 
