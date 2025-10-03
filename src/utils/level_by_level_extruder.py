@@ -1,27 +1,31 @@
 """
-Level-by-level extrusion module.
+Level-by-level extrusion module with unit system support.
 
 This module processes each story individually using its own DXF file.
 Each level is extruded from its floor elevation to the floor above.
+Supports both US (lb-in-F) and Metric (N-mm-C) unit systems.
 """
 
 from typing import List, Dict
 from models.element_infor import Story, RectColumn, CircColumn, Wall, CouplingBeam, Slab
 from models.geometry3d import ColumnGeom, WallGeom, SlabGeom, BeamGeom
 from utils.dxf_processing import read_dxf_plan, get_points_by_layer, get_lines_by_layer, get_polylines_by_layer
+from utils.unit_config import UnitConfig, convert_story_height
 import os
 
 
-def calculate_story_elevations(stories: List[Story], base_elevation: float = 0.0) -> Dict[str, float]:
+def calculate_story_elevations(stories: List[Story], base_elevation: float,
+                               unit_config: UnitConfig) -> Dict[str, float]:
     """
-    Calculate elevation for each story level.
+    Calculate elevation for each story level in story input units.
 
     Args:
         stories: List of Story objects (ordered from bottom to top)
-        base_elevation: Base elevation in meters
+        base_elevation: Base elevation in story input units (ft or m)
+        unit_config: Unit configuration
 
     Returns:
-        Dictionary mapping level name to bottom elevation (in meters)
+        Dictionary mapping level name to bottom elevation (in story input units)
     """
     elevations = {}
     current_elev = base_elevation
@@ -39,6 +43,7 @@ def extrude_level_columns(
         z_top: float,
         rect_columns: List[RectColumn],
         circ_columns: List[CircColumn],
+        unit_config: UnitConfig,
         layer_rect: str = "REC COLS",
         layer_circ: str = "CIR COLS"
 ) -> List[ColumnGeom]:
@@ -47,10 +52,11 @@ def extrude_level_columns(
 
     Args:
         story: Story object containing DXF path
-        z_bottom: Bottom elevation in mm
-        z_top: Top elevation in mm
+        z_bottom: Bottom elevation in model units (in or mm)
+        z_top: Top elevation in model units (in or mm)
         rect_columns: List of rectangular column properties
         circ_columns: List of circular column properties
+        unit_config: Unit configuration
         layer_rect: DXF layer name for rectangular columns
         layer_circ: DXF layer name for circular columns
 
@@ -74,9 +80,13 @@ def extrude_level_columns(
     for x, y, _ in rect_points:
         prop_name = rect_props.get(story.level, None)
         if prop_name:
+            # Convert DXF coordinates (in story input units) to model units
+            x_model = x * unit_config.length_to_model
+            y_model = y * unit_config.length_to_model
+
             column_geom = ColumnGeom(
-                start_point=(x * 1000, y * 1000, z_bottom),  # Convert m to mm
-                end_point=(x * 1000, y * 1000, z_top),  # Convert m to mm
+                start_point=(x_model, y_model, z_bottom),
+                end_point=(x_model, y_model, z_top),
                 prop_name=prop_name.name
             )
             column_geometries.append(column_geom)
@@ -86,9 +96,12 @@ def extrude_level_columns(
     for x, y, _ in circ_points:
         prop_name = circ_props.get(story.level, None)
         if prop_name:
+            x_model = x * unit_config.length_to_model
+            y_model = y * unit_config.length_to_model
+
             column_geom = ColumnGeom(
-                start_point=(x * 1000, y * 1000, z_bottom),  # Convert m to mm
-                end_point=(x * 1000, y * 1000, z_top),  # Convert m to mm
+                start_point=(x_model, y_model, z_bottom),
+                end_point=(x_model, y_model, z_top),
                 prop_name=prop_name.name
             )
             column_geometries.append(column_geom)
@@ -102,6 +115,7 @@ def extrude_level_walls(
         z_bottom: float,
         z_top: float,
         walls: List[Wall],
+        unit_config: UnitConfig,
         layer_x: str = "WALL",
         layer_y: str = "WALL Y"
 ) -> List[WallGeom]:
@@ -110,9 +124,10 @@ def extrude_level_walls(
 
     Args:
         story: Story object containing DXF path
-        z_bottom: Bottom elevation in mm
-        z_top: Top elevation in mm
+        z_bottom: Bottom elevation in model units (in or mm)
+        z_top: Top elevation in model units (in or mm)
         walls: List of wall properties
+        unit_config: Unit configuration
         layer_x: DXF layer name for X-direction walls
         layer_y: DXF layer name for Y-direction walls
 
@@ -137,26 +152,37 @@ def extrude_level_walls(
     wall_x_lines = get_lines_by_layer(doc, layer_x)
     for (x1, y1, _), (x2, y2, _) in wall_x_lines:
         for w in wall_props:
-            if w.name:  # check that we have a valid wall name
+            if w.name:
+                # Convert coordinates to model units
+                x1_model = x1 * unit_config.length_to_model
+                x2_model = x2 * unit_config.length_to_model
+                y1_model = y1 * unit_config.length_to_model
+                y2_model = y2 * unit_config.length_to_model
+
                 wall_geom = WallGeom(
                     num_points=4,
-                    x_coord=[x1 * 1000, x2 * 1000, x2 * 1000, x1 * 1000],  # m → mm
-                    y_coord=[y1 * 1000, y2 * 1000, y2 * 1000, y1 * 1000],
+                    x_coord=[x1_model, x2_model, x2_model, x1_model],
+                    y_coord=[y1_model, y2_model, y2_model, y1_model],
                     z_coord=[z_bottom, z_bottom, z_top, z_top],
                     prop_name=w.name
                 )
                 wall_geometries.append(wall_geom)
-                break  # stop after first match (assuming 1 per level)
+                break
 
     # Process Y-direction walls
     wall_y_lines = get_lines_by_layer(doc, layer_y)
     for (x1, y1, _), (x2, y2, _) in wall_y_lines:
         for w in wall_props:
             if w.name:
+                x1_model = x1 * unit_config.length_to_model
+                x2_model = x2 * unit_config.length_to_model
+                y1_model = y1 * unit_config.length_to_model
+                y2_model = y2 * unit_config.length_to_model
+
                 wall_geom = WallGeom(
                     num_points=4,
-                    x_coord=[x1 * 1000, x2 * 1000, x2 * 1000, x1 * 1000],
-                    y_coord=[y1 * 1000, y2 * 1000, y2 * 1000, y1 * 1000],
+                    x_coord=[x1_model, x2_model, x2_model, x1_model],
+                    y_coord=[y1_model, y2_model, y2_model, y1_model],
                     z_coord=[z_bottom, z_bottom, z_top, z_top],
                     prop_name=w.name
                 )
@@ -171,6 +197,7 @@ def extrude_level_beams(
         story: Story,
         z_level: float,
         beams: List[CouplingBeam],
+        unit_config: UnitConfig,
         layer_x: str = "CB X",
         layer_y: str = "CB Y"
 ) -> List[BeamGeom]:
@@ -180,8 +207,9 @@ def extrude_level_beams(
 
     Args:
         story: Story object containing DXF path
-        z_level: Floor elevation in mm
+        z_level: Floor elevation in model units (in or mm)
         beams: List of beam properties
+        unit_config: Unit configuration
         layer_x: DXF layer name for X-direction beams
         layer_y: DXF layer name for Y-direction beams
 
@@ -209,26 +237,14 @@ def extrude_level_beams(
                 break
 
         if matching_beam:
-            beam_geom = BeamGeom(
-                start_point=(x1 * 1000, y1 * 1000, z_level),  # Convert m to mm
-                end_point=(x2 * 1000, y2 * 1000, z_level),  # Convert m to mm
-                prop_name=matching_beam.name
-            )
-            beam_geometries.append(beam_geom)
+            x1_model = x1 * unit_config.length_to_model
+            x2_model = x2 * unit_config.length_to_model
+            y1_model = y1 * unit_config.length_to_model
+            y2_model = y2 * unit_config.length_to_model
 
-    # Process Y-direction beams
-    beam_y_lines = get_lines_by_layer(doc, layer_y)
-    for (x1, y1, _), (x2, y2, _) in beam_y_lines:
-        matching_beam = None
-        for beam in beam_props.values():
-            if "Y" in beam.name.upper():
-                matching_beam = beam
-                break
-
-        if matching_beam:
             beam_geom = BeamGeom(
-                start_point=(x1 * 1000, y1 * 1000, z_level),  # Convert m to mm
-                end_point=(x2 * 1000, y2 * 1000, z_level),  # Convert m to mm
+                start_point=(x1_model, y1_model, z_level),
+                end_point=(x2_model, y2_model, z_level),
                 prop_name=matching_beam.name
             )
             beam_geometries.append(beam_geom)
@@ -241,6 +257,7 @@ def extrude_level_slabs(
         story: Story,
         z_level: float,
         slabs: List[Slab],
+        unit_config: UnitConfig,
         layer: str = "SLAB"
 ) -> List[SlabGeom]:
     """
@@ -249,8 +266,9 @@ def extrude_level_slabs(
 
     Args:
         story: Story object containing DXF path
-        z_level: Floor elevation in mm
+        z_level: Floor elevation in model units (in or mm)
         slabs: List of slab properties
+        unit_config: Unit configuration
         layer: DXF layer name for slabs
 
     Returns:
@@ -278,8 +296,9 @@ def extrude_level_slabs(
     # Process slab polylines
     slab_polylines = get_polylines_by_layer(doc, layer)
     for poly_idx, polyline in enumerate(slab_polylines):
-        x_coords = [pt[0] * 1000 for pt in polyline]  # Convert m to mm
-        y_coords = [pt[1] * 1000 for pt in polyline]  # Convert m to mm
+        # Convert coordinates to model units
+        x_coords = [pt[0] * unit_config.length_to_model for pt in polyline]
+        y_coords = [pt[1] * unit_config.length_to_model for pt in polyline]
         z_coords = [z_level] * len(polyline)
 
         slab_geom = SlabGeom(
@@ -305,7 +324,8 @@ def process_all_levels(
         circ_columns: List[CircColumn],
         walls: List[Wall],
         beams: List[CouplingBeam],
-        slabs: List[Slab]
+        slabs: List[Slab],
+        unit_config: UnitConfig
 ) -> tuple:
     """
     Process all stories level-by-level, creating geometry from individual DXF files.
@@ -314,12 +334,13 @@ def process_all_levels(
 
     Args:
         stories: List of Story objects (ordered bottom to top)
-        base_elevation: Base elevation in meters
+        base_elevation: Base elevation in story input units (ft or m)
         rect_columns: All rectangular column properties
         circ_columns: All circular column properties
         walls: All wall properties
         beams: All beam properties
         slabs: All slab properties
+        unit_config: Unit configuration
 
     Returns:
         Tuple of (all_columns, all_walls, all_beams, all_slabs)
@@ -328,8 +349,8 @@ def process_all_levels(
     print("PROCESSING LEVELS FROM BOTTOM TO TOP")
     print("=" * 60)
 
-    # Calculate elevations for all stories
-    elevations = calculate_story_elevations(stories, base_elevation)
+    # Calculate elevations for all stories (in story input units)
+    elevations = calculate_story_elevations(stories, base_elevation, unit_config)
 
     all_columns = []
     all_walls = []
@@ -341,33 +362,36 @@ def process_all_levels(
         print(f"\n📐 Processing {story.level} (Story {idx + 1}/{len(stories)})")
         print(f"   DXF: {story.dxf_path}")
 
-        z_bottom = elevations[story.level] * 1000  # Convert m to mm
-        z_top = (elevations[story.level] + story.height) * 1000  # Convert m to mm
+        # Convert elevations from story input units to model units
+        z_bottom = convert_story_height(elevations[story.level], unit_config)
+        z_top = convert_story_height(elevations[story.level] + story.height, unit_config)
         z_floor = z_top  # Slabs and beams at top of story
 
-        print(f"   Elevation: {elevations[story.level]:.2f}m to {elevations[story.level] + story.height:.2f}m")
+        print(
+            f"   Elevation: {elevations[story.level]:.2f}{unit_config.story_input_unit} to {elevations[story.level] + story.height:.2f}{unit_config.story_input_unit}")
+        print(f"   Model Units: {z_bottom:.2f}{unit_config.length_unit} to {z_top:.2f}{unit_config.length_unit}")
 
         # Process columns (from bottom to top of this story)
         level_columns = extrude_level_columns(
-            story, z_bottom, z_top, rect_columns, circ_columns
+            story, z_bottom, z_top, rect_columns, circ_columns, unit_config
         )
         all_columns.extend(level_columns)
 
         # Process walls (from bottom to top of this story)
         level_walls = extrude_level_walls(
-            story, z_bottom, z_top, walls
+            story, z_bottom, z_top, walls, unit_config
         )
         all_walls.extend(level_walls)
 
         # Process beams (at top of this story)
         level_beams = extrude_level_beams(
-            story, z_floor, beams
+            story, z_floor, beams, unit_config
         )
         all_beams.extend(level_beams)
 
         # Process slabs (at top of this story)
         level_slabs = extrude_level_slabs(
-            story, z_floor, slabs
+            story, z_floor, slabs, unit_config
         )
         all_slabs.extend(level_slabs)
 

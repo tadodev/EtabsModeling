@@ -1,8 +1,8 @@
 """
-ETABS Model Builder - Level-by-Level Approach
+ETABS Model Builder - Level-by-Level Approach with Unit System Support
 
 This workflow processes each story individually using its own DXF file.
-Each level's DXF path is specified in the Excel Story table.
+Supports both US (lb-in-F) and Metric (N-mm-C) unit systems.
 """
 
 from connection.etabs_connection import connect_to_etabs
@@ -22,33 +22,44 @@ from utils.excel_processing import (read_story_table, read_concrete_table,
                                     read_circular_column_table, read_wall_table,
                                     read_coupling_beam_table, read_slab_table)
 from utils.level_by_level_extruder import process_all_levels
+from utils.unit_config import UnitSystem, get_unit_config, print_unit_info
 
 
-def etabs_model_builder_level_by_level():
+def etabs_model_builder_level_by_level(
+    unit_system: UnitSystem = UnitSystem.METRIC,
+    base_elevation: float = -18.0,
+    excel_path: str = r"C:\Work\Code\EtabsModeling\src\data\Input Data_V02_metric.xlsx"
+):
     """
     Complete workflow for building ETABS model using level-by-level approach.
 
-    Each story has its own DXF file specified in the Excel Story sheet.
-    The model is built from bottom to top, extruding each level by its story height.
+    Args:
+        unit_system: UnitSystem.US or UnitSystem.METRIC
+        base_elevation: Base elevation in story input units (ft for US, m for Metric)
+        excel_path: Path to Excel input file
     """
     print("=" * 70)
     print(" ETABS MODEL BUILDER - LEVEL BY LEVEL APPROACH")
     print("=" * 70)
+
+    # Get unit configuration
+    unit_config = get_unit_config(unit_system)
+    print_unit_info(unit_config)
 
     # ============================================
     # STEP 1: Connect to ETABS
     # ============================================
     print("\n🔌 Connecting to ETABS...")
     sap_model = connect_to_etabs()
-    sap_model.SetPresentUnits(9)  # N_mm_C units
-    base_elevation = -18  # Base elevation in meters
-    print("✅ Connected to ETABS")
+
+    # Set unit system in ETABS
+    sap_model.SetPresentUnits(unit_config.etabs_unit_code)
+    print(f"✅ Connected to ETABS ({unit_config.system.value} units)")
 
     # ============================================
     # STEP 2: Read Excel Data
     # ============================================
     print("\n📊 Reading Excel data...")
-    excel_path = r"C:\Work\Code\EtabsModeling\src\data\Input Data_V02_metric.xlsx"
 
     stories = read_story_table(excel_path)
     concretes = read_concrete_table(excel_path)
@@ -64,7 +75,7 @@ def etabs_model_builder_level_by_level():
     # STEP 3: Define Stories and Properties
     # ============================================
     print("\n🏗️ Defining stories and material properties in ETABS...")
-    define_stories(sap_model, stories, base_elevation)
+    define_stories(sap_model, stories, base_elevation, unit_config)
     define_concrete_materials(sap_model, concretes)
     define_rectangular_sections(sap_model, rect_columns)
     define_circular_sections(sap_model, cir_columns)
@@ -85,7 +96,8 @@ def etabs_model_builder_level_by_level():
         circ_columns=cir_columns,
         walls=walls,
         beams=coupling_beams,
-        slabs=slabs
+        slabs=slabs,
+        unit_config=unit_config
     )
 
     # ============================================
@@ -109,7 +121,7 @@ def etabs_model_builder_level_by_level():
         print("⚠️ No beams to create")
 
     if all_slabs:
-        create_slabs_in_etabs(sap_model, all_slabs, "Dead", "Live")
+        create_slabs_in_etabs(sap_model, all_slabs, "Dead", "Live", unit_config)
     else:
         print("⚠️ No slabs to create")
 
@@ -122,7 +134,8 @@ def etabs_model_builder_level_by_level():
     print("\n" + "=" * 70)
     print("✅ COMPLETE! ETABS model created successfully!")
     print("=" * 70)
-    print(f"   📍 Base Elevation: {base_elevation} m")
+    print(f"   📏 Unit System: {unit_config.system.value}")
+    print(f"   📍 Base Elevation: {base_elevation} {unit_config.story_input_unit}")
     print(f"   📊 Total Stories: {len(stories)}")
     print(f"   🏛️ Total Columns: {len(all_columns)}")
     print(f"   🧱 Total Walls: {len(all_walls)}")
@@ -131,3 +144,18 @@ def etabs_model_builder_level_by_level():
     print("=" * 70)
 
 
+# Example usage
+if __name__ == "__main__":
+    # For Metric system (N-mm-C)
+    etabs_model_builder_level_by_level(
+        unit_system=UnitSystem.METRIC,
+        base_elevation=-18.0,  # meters
+        excel_path=r"C:\Work\Code\EtabsModeling\src\data\Input Data_V02_metric.xlsx"
+    )
+
+    # For US system (lb-in-F)
+    # etabs_model_builder_level_by_level(
+    #     unit_system=UnitSystem.US,
+    #     base_elevation=-60.0,  # feet
+    #     excel_path=r"C:\Work\Code\EtabsModeling\src\data\Input Data_V02_US.xlsx"
+    # )
