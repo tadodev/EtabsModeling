@@ -143,12 +143,12 @@ def read_wall_table(path: str, sheet: str = "Wall") -> List[Wall]:
         material = row[1]  # "6000 psi"
         # Skip f'c column (row[2])
         name_x = row[3]
-        thk_y = float(row[4])
+        thk_x = float(row[4])
         name_y = row[5]
-        thk_x = float(row[6])
+        thk_y = float(row[6])
 
-        walls.append(Wall(level=level, name=name_x, material=material, wall_thk=thk_y))
-        walls.append(Wall(level=level, name=name_y, material=material, wall_thk=thk_x))
+        walls.append(Wall(level=level, name=name_x, material=material, wall_thk=thk_x))
+        walls.append(Wall(level=level, name=name_y, material=material, wall_thk=thk_y))
 
     return walls
 

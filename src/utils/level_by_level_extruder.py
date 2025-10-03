@@ -75,8 +75,8 @@ def extrude_level_columns(
         prop_name = rect_props.get(story.level, None)
         if prop_name:
             column_geom = ColumnGeom(
-                start_point=(x, y, z_bottom),
-                end_point=(x, y, z_top),
+                start_point=(x * 1000, y * 1000, z_bottom),  # Convert m to mm
+                end_point=(x * 1000, y * 1000, z_top),  # Convert m to mm
                 prop_name=prop_name.name
             )
             column_geometries.append(column_geom)
@@ -87,8 +87,8 @@ def extrude_level_columns(
         prop_name = circ_props.get(story.level, None)
         if prop_name:
             column_geom = ColumnGeom(
-                start_point=(x, y, z_bottom),
-                end_point=(x, y, z_top),
+                start_point=(x * 1000, y * 1000, z_bottom),  # Convert m to mm
+                end_point=(x * 1000, y * 1000, z_top),  # Convert m to mm
                 prop_name=prop_name.name
             )
             column_geometries.append(column_geom)
@@ -102,8 +102,8 @@ def extrude_level_walls(
         z_bottom: float,
         z_top: float,
         walls: List[Wall],
-        layer_x: str = "WALL X",
-        layer_y: str = "WALL"
+        layer_x: str = "WALL",
+        layer_y: str = "WALL Y"
 ) -> List[WallGeom]:
     """
     Extrude walls for a single level from its DXF file.
@@ -125,50 +125,43 @@ def extrude_level_walls(
 
     doc = read_dxf_plan(story.dxf_path)
 
-    # Create lookup dictionary
-    wall_props = {wall.level: wall for wall in walls if wall.level == story.level}
+    # Filter wall properties for this story only
+    wall_props = [w for w in walls if w.level == story.level]
+    if not wall_props:
+        print(f"⚠️ No wall properties found for level {story.level}")
+        return []
 
     wall_geometries = []
 
     # Process X-direction walls
     wall_x_lines = get_lines_by_layer(doc, layer_x)
     for (x1, y1, _), (x2, y2, _) in wall_x_lines:
-        # Find matching wall property (you may need better logic here)
-        matching_wall = None
-        for wall in wall_props.values():
-            if "X" in wall.name.upper():
-                matching_wall = wall
-                break
-
-        if matching_wall:
-            wall_geom = WallGeom(
-                num_points=4,
-                x_coord=[x1, x2, x2, x1],
-                y_coord=[y1, y2, y2, y1],
-                z_coord=[z_bottom, z_bottom, z_top, z_top],
-                prop_name=matching_wall.name
-            )
-            wall_geometries.append(wall_geom)
+        for w in wall_props:
+            if w.name:  # check that we have a valid wall name
+                wall_geom = WallGeom(
+                    num_points=4,
+                    x_coord=[x1 * 1000, x2 * 1000, x2 * 1000, x1 * 1000],  # m → mm
+                    y_coord=[y1 * 1000, y2 * 1000, y2 * 1000, y1 * 1000],
+                    z_coord=[z_bottom, z_bottom, z_top, z_top],
+                    prop_name=w.name
+                )
+                wall_geometries.append(wall_geom)
+                break  # stop after first match (assuming 1 per level)
 
     # Process Y-direction walls
     wall_y_lines = get_lines_by_layer(doc, layer_y)
     for (x1, y1, _), (x2, y2, _) in wall_y_lines:
-        # Find matching wall property
-        matching_wall = None
-        for wall in wall_props.values():
-            if "Y" in wall.name.upper():
-                matching_wall = wall
+        for w in wall_props:
+            if w.name:
+                wall_geom = WallGeom(
+                    num_points=4,
+                    x_coord=[x1 * 1000, x2 * 1000, x2 * 1000, x1 * 1000],
+                    y_coord=[y1 * 1000, y2 * 1000, y2 * 1000, y1 * 1000],
+                    z_coord=[z_bottom, z_bottom, z_top, z_top],
+                    prop_name=w.name
+                )
+                wall_geometries.append(wall_geom)
                 break
-
-        if matching_wall:
-            wall_geom = WallGeom(
-                num_points=4,
-                x_coord=[x1, x2, x2, x1],
-                y_coord=[y1, y2, y2, y1],
-                z_coord=[z_bottom, z_bottom, z_top, z_top],
-                prop_name=matching_wall.name
-            )
-            wall_geometries.append(wall_geom)
 
     print(f"  ✓ Created {len(wall_geometries)} walls for {story.level}")
     return wall_geometries
@@ -217,8 +210,8 @@ def extrude_level_beams(
 
         if matching_beam:
             beam_geom = BeamGeom(
-                start_point=(x1, y1, z_level),
-                end_point=(x2, y2, z_level),
+                start_point=(x1 * 1000, y1 * 1000, z_level),  # Convert m to mm
+                end_point=(x2 * 1000, y2 * 1000, z_level),  # Convert m to mm
                 prop_name=matching_beam.name
             )
             beam_geometries.append(beam_geom)
@@ -234,8 +227,8 @@ def extrude_level_beams(
 
         if matching_beam:
             beam_geom = BeamGeom(
-                start_point=(x1, y1, z_level),
-                end_point=(x2, y2, z_level),
+                start_point=(x1 * 1000, y1 * 1000, z_level),  # Convert m to mm
+                end_point=(x2 * 1000, y2 * 1000, z_level),  # Convert m to mm
                 prop_name=matching_beam.name
             )
             beam_geometries.append(beam_geom)
@@ -285,8 +278,8 @@ def extrude_level_slabs(
     # Process slab polylines
     slab_polylines = get_polylines_by_layer(doc, layer)
     for poly_idx, polyline in enumerate(slab_polylines):
-        x_coords = [pt[0] for pt in polyline]
-        y_coords = [pt[1] for pt in polyline]
+        x_coords = [pt[0] * 1000 for pt in polyline]  # Convert m to mm
+        y_coords = [pt[1] * 1000 for pt in polyline]  # Convert m to mm
         z_coords = [z_level] * len(polyline)
 
         slab_geom = SlabGeom(
